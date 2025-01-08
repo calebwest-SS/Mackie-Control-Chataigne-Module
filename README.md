@@ -1,8 +1,7 @@
 # Mackie-Universal-Chataigne-Module
 A Chataigne module for the X-Touch Series and other Mackie protocol compatible MIDI Controllers
-WIP
 
-Changelog 
+###Changelog 
 1.1.0
 Optimization of scanning through values
 Bug Fix
