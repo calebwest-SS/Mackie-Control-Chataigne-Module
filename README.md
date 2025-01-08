@@ -3,6 +3,12 @@ A Chataigne module for the X-Touch Series and other Mackie protocol compatible M
 WIP
 
 Changelog 
+1.1.0
+Optimization of scanning through values
+Bug Fix
+- Strip 1 rotary Read only to match others
+- UTC offset update
+
 1.0.4
 Bug Fix
 - Make sure clock is updated consistantly (force draw every 1.5 seconds)

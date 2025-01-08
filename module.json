@@ -64,7 +64,7 @@
 				"collapsed":true,
 				"Color":{"type":"Enum","options":{"White":7, "Red":1, "Yellow":3, "Green":2, "Cyan":6, "Blue":4, "Magenta":5,"Black":0}},
 				"EncoderName": {"type":"String"},
-				"RotaryValue": {"type":"Float", "min":0, "max":1},
+				"RotaryValue": {"type":"Float", "readOnly":true, "min":0, "max":1},
 				"RotaryMode": {"type":"Enum", "options": {"Single":1, "BoostCut":17, "Wrap":33, "Spread":49, "Single2":65, "BoostCut2":81,"Wrap2":97,"Spread2":113}},
 				"FaderName": {"type":"String"},
 				"FaderValue": { "type":"Float", "min":0,"max":1},

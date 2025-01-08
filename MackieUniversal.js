@@ -163,7 +163,7 @@ function moduleParameterChanged(param)
         }
 
         //Did we change the selected strip ?
-        if(param.name=="stripIndex"){
+        else if(param.name=="stripIndex"){
             var i;
             for(i=0;i<8;i++){
                 if((param.get()==0)||(i+1!=param.get())){
@@ -177,7 +177,7 @@ function moduleParameterChanged(param)
         }
 
         //Did we change the encoders assign ?
-        if(param.name=="encodersAssign"){
+        else if(param.name=="encodersAssign"){
             var i;
             for(i=0;i<6;i++){
                 if(param.get()!=i){
@@ -192,7 +192,7 @@ function moduleParameterChanged(param)
         }
 
         //Did we change the Views ?
-        if(param.name=="activeView"){
+        else if(param.name=="activeView"){
             var i;
             for(i=0;i<8;i++){
                 if(param.get()!=i){
@@ -207,7 +207,7 @@ function moduleParameterChanged(param)
         }
 
         //Did we change the Controller type ?
-        if(param.name=="controllerType"){
+        else if(param.name=="controllerType"){
             init();
         }
     }
@@ -232,15 +232,7 @@ function strip_update(name, value, strip)
         local.sendPitchWheel(strip,value*16383);
     }
     
-    if(name=="meter"){
-        local.sendChannelPressure(1,(value*14)+((strip-1)*16));
-    }
-
-    if(name=="select"){
-        local.sendNoteOn(1,strip+23,value);
-    }
-
-    if(name=="rotaryValue"||name=="rotaryMode"){
+    else if(name=="rotaryValue"||name=="rotaryMode"){
         index = strip-1;
         //script.log(local.values.strips.getChild('Strip '+strip).rotaryMode.get());
         if(((local.values.strips.getChild('Strip '+strip).rotaryMode.get()-1)/16==3)||((local.values.strips.getChild('Strip '+strip).rotaryMode.get()-1)/16==7)){
@@ -250,7 +242,7 @@ function strip_update(name, value, strip)
         }
     }
 
-    if(name=="encoderName"){
+    else if(name=="encoderName"){
         // Update display with new encoder name
         var index = strip-1;
         var newLabel = value;
@@ -266,7 +258,7 @@ function strip_update(name, value, strip)
         }
     }
 
-    if(name=="faderName"){
+    else if(name=="faderName"){
         var index = strip-1;
         var newLabel = value;
         var short = 7-newLabel.length;
@@ -281,7 +273,15 @@ function strip_update(name, value, strip)
         }
     }
 
-    if(name=='color'){
+    else if(name=="meter"){
+        local.sendChannelPressure(1,(value*14)+((strip-1)*16));
+    }
+
+    else if(name=="select"){
+        local.sendNoteOn(1,strip+23,value);
+    }
+
+    else if(name=='color'){
         storedColors[strip-1] = value;
         if(local.parameters.controllerType.get() == 0){
             local.sendSysex(0x00,0x00,0x66,0x14,0x72,storedColors);
@@ -290,15 +290,15 @@ function strip_update(name, value, strip)
         }
     }
         
-    if(name=="solo"){
+    else if(name=="solo"){
         local.sendNoteOn(1,strip+7,value);
     }
         
-    if(name=="mute"){
+    else if(name=="mute"){
         local.sendNoteOn(1,strip+15,value);
     }
 
-    if(name=="rec"){
+    else if(name=="rec"){
         local.sendNoteOn(1,strip-1,value);
     }
 }
@@ -318,7 +318,7 @@ function noteOnEvent(channel, pitch, velocity)
     }
 
     //Is it a 'Solo' button ?
-    if (pitch >= 8 && pitch <= 15){
+    else if (pitch >= 8 && pitch <= 15){
         //Change solo strip state
         var index = pitch-8;
         if (local.values.strips.getChild('Strip '+(index+1)).solo.get()==0){
@@ -330,7 +330,7 @@ function noteOnEvent(channel, pitch, velocity)
     }
 
     //Is it a 'Mute' button ?
-    if (pitch >= 16 && pitch <= 23){
+    else if (pitch >= 16 && pitch <= 23){
         // Change mute strip state
         var index = pitch-16;
         if (local.values.strips.getChild('Strip '+(index+1)).mute.get()==0){
@@ -341,123 +341,123 @@ function noteOnEvent(channel, pitch, velocity)
     }
 
     //Is it a 'Select' button?
-    if (pitch >= 24 && pitch <= 31){
+    else if (pitch >= 24 && pitch <= 31){
         //Set new selected strip value    
         local.parameters.stripIndex.set(pitch-23);
     }
     
     //Is it a 'Push' button?
-    if (pitch >= 32 && pitch <= 39){
+    else if (pitch >= 32 && pitch <= 39){
         var index = pitch-32;
         if(velocity==127) {local.values.strips.getChild('Strip '+(index+1)).push.set(1);}
     }
     
     //Is it a 'Encoder assign' button?
-    if (pitch >= 40 && pitch <= 45){
+    else if (pitch >= 40 && pitch <= 45){
         local.parameters.encodersAssign.setData(pitch-40);
     }
     
     //Is it a 'Move' button?
-    if (pitch >= 46 && pitch <= 49){
+    else if (pitch >= 46 && pitch <= 49){
         if (pitch == 46) {
             local.parameters.bankIndex.set(local.parameters.bankIndex.get()-1);
             local.values.misc.bankPrev.set(1);
         }
-        if (pitch == 47) {
+        else if (pitch == 47) {
             local.parameters.bankIndex.set(local.parameters.bankIndex.get()+1);
             local.values.misc.bankNext.set(1);
         }
-        if (pitch == 48) {local.values.misc.chanPrev.set(1);}
-        if (pitch == 49) {local.values.misc.chanNext.set(1);}
+        else if (pitch == 48) {local.values.misc.chanPrev.set(1);}
+        else if (pitch == 49) {local.values.misc.chanNext.set(1);}
         // if (pitch == 48) {local.parameters.stripIndex.set(local.parameters.stripIndex.get()-1);}
         // if (pitch == 49) {local.parameters.stripIndex.set(local.parameters.stripIndex.get()+1);}
     }
     
     //Is it a 'Visual' button?
-    if (pitch >= 50 && pitch <= 53){
+    else if (pitch >= 50 && pitch <= 53){
         if (pitch == 50) {if(velocity==127){script.log("Flip");local.values.main.flip.set(1);}}
-        if (pitch == 51) {if(velocity==127){script.log("Global View");local.values.views.globalView.set(1);}}
-        if (pitch == 52) {if(velocity==127){script.log("Name/Value");local.values.display.name_Value.set(1);}}
-        if (pitch == 53) {if(velocity==127){script.log("SMPTE/Beats");local.values.display.sMPTE_Beats.set(1);}}
+        else if (pitch == 51) {if(velocity==127){script.log("Global View");local.values.views.globalView.set(1);}}
+        else if (pitch == 52) {if(velocity==127){script.log("Name/Value");local.values.display.name_Value.set(1);}}
+        else if (pitch == 53) {if(velocity==127){script.log("SMPTE/Beats");local.values.display.sMPTE_Beats.set(1);}}
     }
     
     //Is it a 'Function' button ?
-    if (pitch >= 54 && pitch <= 61){
+    else if (pitch >= 54 && pitch <= 61){
         var index = pitch-54;
         if (velocity==127){script.log("Function"+ (index+1)); local.values.functionnal.getChild("f"+(index+1)).set(1);}
     }
     
     //Is it a 'View' button ?
-    if (pitch >= 62 && pitch <= 69){
+    else if (pitch >= 62 && pitch <= 69){
         // Set new view value
         local.parameters.activeView.setData(pitch-62);
     }
 
     //Is it a 'Modify' button ?
-    if (pitch >= 70 && pitch <= 73){
+    else if (pitch >= 70 && pitch <= 73){
         if (pitch == 70) {if(velocity==127){script.log("Shift");local.values.modify.shift.set(1);}}
-        if (pitch == 71) {if(velocity==127){script.log("Option");local.values.modify.option.set(1);}}
-        if (pitch == 72) {if(velocity==127){script.log("Control");local.values.modify.control.set(1);}}
-        if (pitch == 73) {if(velocity==127){script.log("Alt");local.values.modify.alt.set(1);}}
+        else if (pitch == 71) {if(velocity==127){script.log("Option");local.values.modify.option.set(1);}}
+        else if (pitch == 72) {if(velocity==127){script.log("Control");local.values.modify.control.set(1);}}
+        else if (pitch == 73) {if(velocity==127){script.log("Alt");local.values.modify.alt.set(1);}}
     }
 
     //Is it an 'Automation' button ?
-    if (pitch >= 74 && pitch <= 79){
+    else if (pitch >= 74 && pitch <= 79){
         if (pitch == 74) {if(velocity==127){script.log("Read/Off");local.values.automation.readOff.set(1);}}
-        if (pitch == 75) {if(velocity==127){script.log("Write");local.values.automation.write.set(1);}}
-        if (pitch == 76) {if(velocity==127){script.log("Trim");local.values.automation.trim.set(1);}}
-        if (pitch == 77) {if(velocity==127){script.log("Touch");local.values.automation.touch.set(1);}}
-        if (pitch == 78) {if(velocity==127){script.log("Latch");local.values.automation.latch.set(1);}}
-        if (pitch == 79) {if(velocity==127){script.log("Group");local.values.automation.group.set(1);}}
+        else if (pitch == 75) {if(velocity==127){script.log("Write");local.values.automation.write.set(1);}}
+        else if (pitch == 76) {if(velocity==127){script.log("Trim");local.values.automation.trim.set(1);}}
+        else if (pitch == 77) {if(velocity==127){script.log("Touch");local.values.automation.touch.set(1);}}
+        else if (pitch == 78) {if(velocity==127){script.log("Latch");local.values.automation.latch.set(1);}}
+        else if (pitch == 79) {if(velocity==127){script.log("Group");local.values.automation.group.set(1);}}
     }
 
     //Is it an 'Utility' button ?
-    if (pitch >= 80 && pitch <= 83){
+    else if (pitch >= 80 && pitch <= 83){
         if (pitch == 80) {if(velocity==127){script.log("Save");local.values.utility.save.set(1);}}
-        if (pitch == 81) {if(velocity==127){script.log("Undo");local.values.utility.undo.set(1);}}
-        if (pitch == 82) {if(velocity==127){script.log("Cancel");local.values.utility.cancel.set(1);}}
-        if (pitch == 83) {if(velocity==127){script.log("Enter");local.values.utility.enter.set(1);}}
+        else if (pitch == 81) {if(velocity==127){script.log("Undo");local.values.utility.undo.set(1);}}
+        else if (pitch == 82) {if(velocity==127){script.log("Cancel");local.values.utility.cancel.set(1);}}
+        else if (pitch == 83) {if(velocity==127){script.log("Enter");local.values.utility.enter.set(1);}}
     }
 
     //Is it a 'Transport' button?
-    if (pitch >= 84 && pitch <= 95){
+    else if (pitch >= 84 && pitch <= 95){
         if (pitch == 84) {if(velocity==127){script.log("Marker");local.values.transport.marker.set(1);}}
-        if (pitch == 85) {if(velocity==127){script.log("Nudge");local.values.transport.nudge.set(1);}}
-        if (pitch == 86) {if(velocity==127){script.log("Cycle");local.values.transport.cycle.set(1);}}
-        if (pitch == 87) {if(velocity==127){script.log("Drop");local.values.transport.drop.set(1);}}
-        if (pitch == 88) {if(velocity==127){script.log("Replace");local.values.transport.replace.set(1);}}
-        if (pitch == 89) {if(velocity==127){script.log("Click");local.values.transport.click.set(1);}}
-        if (pitch == 90) {if(velocity==127){script.log("Solo");local.values.transport.solo.set(1);}}
-        if (pitch == 91) {if(velocity==127){script.log("Rewind");local.values.transport.rewind.set(1);}}
-        if (pitch == 92) {if(velocity==127){script.log("Fast Forward");local.values.transport.forward.set(1);}}
-        if (pitch == 93) {if(velocity==127){script.log("Stop");local.values.transport.stop.set(1);}}
-        if (pitch == 94) {if(velocity==127){script.log("Play");local.values.transport.play.set(1);}}
-        if (pitch == 95) {if(velocity==127){script.log("RecSet");local.values.transport.recSet.set(1);}}
+        else if (pitch == 85) {if(velocity==127){script.log("Nudge");local.values.transport.nudge.set(1);}}
+        else if (pitch == 86) {if(velocity==127){script.log("Cycle");local.values.transport.cycle.set(1);}}
+        else if (pitch == 87) {if(velocity==127){script.log("Drop");local.values.transport.drop.set(1);}}
+        else if (pitch == 88) {if(velocity==127){script.log("Replace");local.values.transport.replace.set(1);}}
+        else if (pitch == 89) {if(velocity==127){script.log("Click");local.values.transport.click.set(1);}}
+        else if (pitch == 90) {if(velocity==127){script.log("Solo");local.values.transport.solo.set(1);}}
+        else if (pitch == 91) {if(velocity==127){script.log("Rewind");local.values.transport.rewind.set(1);}}
+        else if (pitch == 92) {if(velocity==127){script.log("Fast Forward");local.values.transport.forward.set(1);}}
+        else if (pitch == 93) {if(velocity==127){script.log("Stop");local.values.transport.stop.set(1);}}
+        else if (pitch == 94) {if(velocity==127){script.log("Play");local.values.transport.play.set(1);}}
+        else if (pitch == 95) {if(velocity==127){script.log("RecSet");local.values.transport.recSet.set(1);}}
     }
 
     //Is it a 'Arrow' button?
-    if (pitch >= 96 && pitch <= 99){
+    else if (pitch >= 96 && pitch <= 99){
         if (pitch == 96) {if(velocity==127){script.log("Up");local.values.misc.up.set(1);}}
-        if (pitch == 97) {if(velocity==127){script.log("Down");local.values.misc.down.set(1);}}
-        if (pitch == 98) {if(velocity==127){script.log("Left");local.values.misc.left.set(1);}}
-        if (pitch == 99) {if(velocity==127){script.log("Right");local.values.misc.right.set(1);}}
+        else if (pitch == 97) {if(velocity==127){script.log("Down");local.values.misc.down.set(1);}}
+        else if (pitch == 98) {if(velocity==127){script.log("Left");local.values.misc.left.set(1);}}
+        else if (pitch == 99) {if(velocity==127){script.log("Right");local.values.misc.right.set(1);}}
     }
 
     //Is it a 'Misc' button?
-    if (pitch >= 100 && pitch <= 101){
+    else if (pitch >= 100 && pitch <= 101){
         if (pitch == 100) {if(velocity==127){script.log("Zoom");local.values.misc.zoom.set(1);}}
-        if (pitch == 101) {if(velocity==127){script.log("Scrub");local.values.misc.scrub.set(1);}}
+        else if (pitch == 101) {if(velocity==127){script.log("Scrub");local.values.misc.scrub.set(1);}}
     }
 
     //Is it a fader touch?
-    if (pitch >= 104 && pitch <= 111){
+    else if (pitch >= 104 && pitch <= 111){
         var index = pitch-104;
         local.values.strips.getChild('Strip '+(index+1)).touch.set(true);
         if (local.parameters.flashOnTouched.get()){local.values.strips.getChild('Strip '+(index+1)).select.set("flash");}
     }
 
     //Is it the Main touch?
-    if (pitch == 112){
+    else if (pitch == 112){
         local.values.main.mainTouch.set(true);
     }
 
@@ -481,69 +481,69 @@ function noteOffEvent(channel, pitch, velocity)
     }
 
     //Is it the Main touch release?
-    if (pitch == 112){
+    else if (pitch == 112){
         local.values.main.mainTouch.set(false);
     }
 
     //Is it a 'Push' button?
-    if (pitch >= 32 && pitch <= 39){
+    else if (pitch >= 32 && pitch <= 39){
         var index = pitch-32;
         if(velocity==0) {local.values.strips.getChild('Strip '+(index+1)).push.set(0);}
     }
 
-    if (pitch >= 46 && pitch <= 49){
+    else if (pitch >= 46 && pitch <= 49){
         if (pitch == 46) {if(velocity==0){local.values.misc.bankPrev.set(0);}}
-        if (pitch == 47) {if(velocity==0){local.values.misc.bankNext.set(0);}}
-        if (pitch == 48) {if(velocity==0){local.values.misc.chanPrev.set(0);}}
-        if (pitch == 49) {if(velocity==0){local.values.misc.chanNext.set(0);}}
+        else if (pitch == 47) {if(velocity==0){local.values.misc.bankNext.set(0);}}
+        else if (pitch == 48) {if(velocity==0){local.values.misc.chanPrev.set(0);}}
+        else if (pitch == 49) {if(velocity==0){local.values.misc.chanNext.set(0);}}
     }
     //Is it a 'Visual' button?
-    if (pitch >= 50 && pitch <= 53){
+    else if (pitch >= 50 && pitch <= 53){
         if (pitch == 50) {if(velocity==0){local.values.main.flip.set(0);}}
-        if (pitch == 51) {if(velocity==0){local.values.views.globalView.set(0);}}
-        if (pitch == 52) {if(velocity==0){local.values.display.name_Value.set(0);}}
-        if (pitch == 53) {if(velocity==0){local.values.display.sMPTE_Beats.set(0);}}
+        else if (pitch == 51) {if(velocity==0){local.values.views.globalView.set(0);}}
+        else if (pitch == 52) {if(velocity==0){local.values.display.name_Value.set(0);}}
+        else if (pitch == 53) {if(velocity==0){local.values.display.sMPTE_Beats.set(0);}}
     }
     //Is it a 'Function' button ?
-    if (pitch >= 54 && pitch <= 61){
+    else if (pitch >= 54 && pitch <= 61){
         var index = pitch-54;
         if (velocity==0){script.log("Function"+ (index+1)); local.values.functionnal.getChild("f"+(index+1)).set(0);}
     }
 
     //Is it a button ?
-    if (pitch >= 70 && pitch <= 101){
+    else if (pitch >= 70 && pitch <= 101){
         if (pitch == 70) {if(velocity==0){local.values.modify.shift.set(0);}}
-        if (pitch == 71) {if(velocity==0){local.values.modify.option.set(0);}}
-        if (pitch == 72) {if(velocity==0){local.values.modify.control.set(0);}}
-        if (pitch == 73) {if(velocity==0){local.values.modify.alt.set(0);}}
-        if (pitch == 74) {if(velocity==0){local.values.automation.readOff.set(0);}}
-        if (pitch == 75) {if(velocity==0){local.values.automation.write.set(0);}}
-        if (pitch == 76) {if(velocity==0){local.values.automation.trim.set(0);}}
-        if (pitch == 77) {if(velocity==0){local.values.automation.touch.set(0);}}
-        if (pitch == 78) {if(velocity==0){local.values.automation.latch.set(0);}}
-        if (pitch == 79) {if(velocity==0){local.values.automation.group.set(0);}}
-        if (pitch == 80) {if(velocity==0){local.values.utility.save.set(0);}}
-        if (pitch == 81) {if(velocity==0){local.values.utility.undo.set(0);}}
-        if (pitch == 82) {if(velocity==0){local.values.utility.cancel.set(0);}}
-        if (pitch == 83) {if(velocity==0){local.values.utility.enter.set(0);}}
-        if (pitch == 84) {if(velocity==0){local.values.transport.marker.set(0);}}
-        if (pitch == 85) {if(velocity==0){local.values.transport.nudge.set(0);}}
-        if (pitch == 86) {if(velocity==0){local.values.transport.cycle.set(0);}}
-        if (pitch == 87) {if(velocity==0){local.values.transport.drop.set(0);}}
-        if (pitch == 88) {if(velocity==0){local.values.transport.replace.set(0);}}
-        if (pitch == 89) {if(velocity==0){local.values.transport.click.set(0);}}
-        if (pitch == 90) {if(velocity==0){local.values.transport.solo.set(0);}}
-        if (pitch == 91) {if(velocity==0){local.values.transport.rewind.set(0);}}
-        if (pitch == 92) {if(velocity==0){local.values.transport.forward.set(0);}}
-        if (pitch == 93) {if(velocity==0){local.values.transport.stop.set(0);}}
-        if (pitch == 94) {if(velocity==0){local.values.transport.play.set(0);}}
-        if (pitch == 95) {if(velocity==0){local.values.transport.recSet.set(0);}}
-        if (pitch == 96) {if(velocity==0){local.values.misc.up.set(0);}}
-        if (pitch == 97) {if(velocity==0){local.values.misc.down.set(0);}}
-        if (pitch == 98) {if(velocity==0){local.values.misc.left.set(0);}}
-        if (pitch == 99) {if(velocity==0){local.values.misc.right.set(0);}}
-        if (pitch == 100) {if(velocity==0){local.values.misc.zoom.set(0);}}
-        if (pitch == 101) {if(velocity==0){local.values.misc.scrub.set(0);}}
+        else if (pitch == 71) {if(velocity==0){local.values.modify.option.set(0);}}
+        else if (pitch == 72) {if(velocity==0){local.values.modify.control.set(0);}}
+        else if (pitch == 73) {if(velocity==0){local.values.modify.alt.set(0);}}
+        else if (pitch == 74) {if(velocity==0){local.values.automation.readOff.set(0);}}
+        else if (pitch == 75) {if(velocity==0){local.values.automation.write.set(0);}}
+        else if (pitch == 76) {if(velocity==0){local.values.automation.trim.set(0);}}
+        else if (pitch == 77) {if(velocity==0){local.values.automation.touch.set(0);}}
+        else if (pitch == 78) {if(velocity==0){local.values.automation.latch.set(0);}}
+        else if (pitch == 79) {if(velocity==0){local.values.automation.group.set(0);}}
+        else if (pitch == 80) {if(velocity==0){local.values.utility.save.set(0);}}
+        else if (pitch == 81) {if(velocity==0){local.values.utility.undo.set(0);}}
+        else if (pitch == 82) {if(velocity==0){local.values.utility.cancel.set(0);}}
+        else if (pitch == 83) {if(velocity==0){local.values.utility.enter.set(0);}}
+        else if (pitch == 84) {if(velocity==0){local.values.transport.marker.set(0);}}
+        else if (pitch == 85) {if(velocity==0){local.values.transport.nudge.set(0);}}
+        else if (pitch == 86) {if(velocity==0){local.values.transport.cycle.set(0);}}
+        else if (pitch == 87) {if(velocity==0){local.values.transport.drop.set(0);}}
+        else if (pitch == 88) {if(velocity==0){local.values.transport.replace.set(0);}}
+        else if (pitch == 89) {if(velocity==0){local.values.transport.click.set(0);}}
+        else if (pitch == 90) {if(velocity==0){local.values.transport.solo.set(0);}}
+        else if (pitch == 91) {if(velocity==0){local.values.transport.rewind.set(0);}}
+        else if (pitch == 92) {if(velocity==0){local.values.transport.forward.set(0);}}
+        else if (pitch == 93) {if(velocity==0){local.values.transport.stop.set(0);}}
+        else if (pitch == 94) {if(velocity==0){local.values.transport.play.set(0);}}
+        else if (pitch == 95) {if(velocity==0){local.values.transport.recSet.set(0);}}
+        else if (pitch == 96) {if(velocity==0){local.values.misc.up.set(0);}}
+        else if (pitch == 97) {if(velocity==0){local.values.misc.down.set(0);}}
+        else if (pitch == 98) {if(velocity==0){local.values.misc.left.set(0);}}
+        else if (pitch == 99) {if(velocity==0){local.values.misc.right.set(0);}}
+        else if (pitch == 100) {if(velocity==0){local.values.misc.zoom.set(0);}}
+        else if (pitch == 101) {if(velocity==0){local.values.misc.scrub.set(0);}}
     }
 }
 
@@ -563,7 +563,7 @@ function ccEvent(channel, number, value)
         }
     }
     //Is it the Scrub Wheel?
-    if(channel==1 && number==60){
+    else if(channel==1 && number==60){
         if(value == 1){
             //scrub forward
             local.values.transport.wheelClockwise.trigger();
